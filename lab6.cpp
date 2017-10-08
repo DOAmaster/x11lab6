@@ -95,7 +95,7 @@ public:
     void vecMake(Flt a , Flt b, Flt c, Vec v);
     vecMake(0.25, 0.25, 0.25, ambient);
     vecMake(0.75, 0.75, 0.75, diffuse);
-    vecMake(0.0, 1000, -1000.0, lightPos);
+    vecMake(0.0, 10, -1000.0, lightPos);
 	}
 } g;
 
@@ -325,6 +325,22 @@ void init(void)
 	//Setup some objects
 	Object *o;
 	g.nobjects=0;
+
+	//--------------------------------------------------------------------
+	//triangle
+	
+	o = &g.object[g.nobjects];
+	o->type = TYPE_TRIANGLE;
+	vecMake(-100.0,   0.0, -100.0, o->tri[0]);
+	vecMake( 100.0,   0.0, -100.0, o->tri[1]);
+	vecMake( 100.0, 200.0, -100.0, o->tri[2]);
+	void getTriangleNormal(Vec tri[3], Vec norm);
+	Vec norm;
+	getTriangleNormal(o->tri, norm);
+	vecCopy(norm, o->norm);
+	vecMake(.5,.5,.5, o->color);
+	g.nobjects++;
+
 	//--------------------------------------------------------------------
   //left box sphere
 	o = &g.object[g.nobjects];
@@ -337,9 +353,9 @@ void init(void)
 		o->radius = 1500.0;
 	}
 	vecMake(.5,.5,.5, o->color);
-	if (g.color) {
-		vecMake(0, 51.0/255.0, 160.0/255.0, o->color);
-	}
+//	if (g.color) {
+		vecMake(255/255.0, 0/255.0, 0/255.0, o->color);
+//	}
 	vecNormalize(o->norm);
 	g.nobjects++;
 	//--------------------------------------------------------------------
@@ -354,9 +370,9 @@ void init(void)
 		o->radius = 1500.0;
 	}
 	vecMake(.5,.5,.5, o->color);
-	if (g.color) {
-		vecMake(0, 51.0/255.0, 160.0/255.0, o->color);
-	}
+//	if (g.color) {
+		vecMake(0, 255.0/255.0, 0.0/255.0, o->color);
+//	}
 	vecNormalize(o->norm);
 	g.nobjects++;
 	//--------------------------------------------------------------------
@@ -371,9 +387,9 @@ void init(void)
 		o->radius = 1500.0;
 	}
 	vecMake(.5,.5,.5, o->color);
-	if (g.color) {
-		vecMake(0, 51.0/255.0, 160.0/255.0, o->color);
-	}
+//	if (g.color) {
+		vecMake(255.0/255.0, 255.0/255.0, 255.0/255.0, o->color);
+//	}
 	vecNormalize(o->norm);
 	g.nobjects++;
 	//--------------------------------------------------------------------
@@ -387,23 +403,42 @@ void init(void)
 		vecMake(0.0, 100.4, 1.0, o->norm);
 		o->radius = 1500.0;
 	}
-	vecMake(.5,.5,.5, o->color);
-	if (g.color) {
-		vecMake(0, 51.0/255.0, 160.0/255.0, o->color);
-	}
+//	vecMake(.5,.5,.5, o->color);
+//	if (g.color) {
+		vecMake(255.0/255.0, 255.0/255.0, 255.0/255.0, o->color);
+//	}
 	vecNormalize(o->norm);
 	g.nobjects++;
 	//--------------------------------------------------------------------
-
-  //checkered floor
+  //behind z box sphere
 	o = &g.object[g.nobjects];
-	o->type = TYPE_DISK;
-	vecMake(-100.0, -120.0, -1100.0, o->center);
+	o->type = TYPE_SPHERE;
+	vecMake(0, 0.0, -5000.0, o->center);
 	vecMake(0.0, 0.0, -1.0, o->norm);
 	o->radius = 100.0;
 	if (g.tilt) {
 		vecMake(0.0, 100.4, 1.0, o->norm);
-		o->radius = 1000.0;
+		o->radius = 1500.0;
+	}
+	vecMake(.5,.5,.5, o->color);
+//	if (g.color) {
+		vecMake(255/255.0, 255.0/255.0, 255.0/255.0, o->color);
+//	}
+	vecNormalize(o->norm);
+	o->surface = SURF_NONE;
+	g.nobjects++;
+	//--------------------------------------------------------------------
+
+  //checkered floor
+  /*
+	o = &g.object[g.nobjects];
+	o->type = TYPE_DISK;
+	vecMake(-100.0, -100.0, -1000.0, o->center);
+	vecMake(0.0, 0.0, -1.0, o->norm);
+	o->radius = 50.0;
+	if (g.tilt) {
+		vecMake(0.0, 100.4, 1.0, o->norm);
+		o->radius = 50.0;
 	}
 	vecMake(.5,.5,.5, o->color);
 	if (g.color) {
@@ -412,7 +447,9 @@ void init(void)
 	vecNormalize(o->norm);
 	o->surface = SURF_CHECKER;
 	g.nobjects++;
+	*/
 	//--------------------------------------------------------------------
+	//floating orb1
 	o = &g.object[g.nobjects];
 	o->type = TYPE_SPHERE;
 	vecMake(0.0, 0.0, -1000.0, o->center);
@@ -424,15 +461,16 @@ void init(void)
 	if (g.color) {
 		vecMake(.9,.1,.1, o->color);
 	}
-	o->radius = 100.0;
-  o->specular = true;
+	o->radius = 50.0;
+  	o->specular = true;
 	vecNormalize(o->norm);
 	o->surface = SURF_NONE;
 	g.nobjects++;
 	//--------------------------------------------------------------------
+	//floating orb2
 	o = &g.object[g.nobjects];
 	o->type = TYPE_SPHERE;
-	vecMake(100.0, 200.0, -1000.0, o->center);
+	vecMake(100.0, 100.0, -1000.0, o->center);
 	vecMake(0.0, 0.0, -1.0, o->norm);
 	if (g.tilt) {
 		vecMake(-2.4, 0.0, -1.0, o->norm);
@@ -441,7 +479,7 @@ void init(void)
 	if (g.color) {
 		vecMake(255/255.0,205.0/255.0,0, o->color);
 	}
-	o->radius = 100.0;
+	o->radius = 50.0;
   o->specular = true;
 	vecNormalize(o->norm);
 	o->surface = SURF_NONE;
@@ -685,6 +723,8 @@ bool pointInTriangle(Vec tri[3], Vec p, Flt *u, Flt *v)
 	return (*u >= 0.0 && *v >= 0.0 && *u + *v <= 1.0);
 }
 
+
+
 int rayPlaneIntersect(Vec center, Vec normal, Ray *ray, Hit *hit)
 {
 	// (O + t * D - center) . normal = 0.0               (substitution)
@@ -716,6 +756,20 @@ int rayPlaneIntersect(Vec center, Vec normal, Ray *ray, Hit *hit)
 	hit->p[1] = ray->o[1] + hit->t * ray->d[1];
 	hit->p[2] = ray->o[2] + hit->t * ray->d[2];
 	return 1;
+}
+
+
+int rayTriangleIntersect(Object *o, Ray *ray, Hit *hit)
+{
+	if (rayPlaneIntersect(o->tri[0], o->norm, ray, hit)) {
+		Flt u,v;
+		//Flt w;
+		if (pointInTriangle(o->tri, hit->p, &u, &v)) {
+			//w = 1.0 - u - v;
+			return 1;
+		}
+	}
+	return 0;
 }
 
 int rayDiskIntersect(Object *o, Ray *ray, Hit *hit)
@@ -917,6 +971,18 @@ for (i=0; i < g.nobjects; i++) {
       }
   }     
      break;
+
+	case TYPE_TRIANGLE:
+	if (rayTriangleIntersect(o, ray, &hit)) {
+		if (hit.t < closehit.t) {
+			closehit.t = hit.t;
+			vecCopy(hit.p, closehit.p);
+			vecCopy(o->color, closehit.color);
+			vecCopy(o->norm, closehit.norm);
+			h=i;
+		}
+	}
+	break;
 
   }
 }
